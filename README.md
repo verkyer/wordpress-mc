@@ -1,6 +1,6 @@
 # WordPress-MC Docker项目
 
-一个基于 WordPress 官方的定制化镜像，集成了 MySQL 数据库和 OPcache + Memcached 缓存，让你的 WordPress 起飞！并支持灵活的环境变量配置。
+一个基于 WordPress 官方的定制化镜像，集成了 OPcache + Memcached 缓存拓展，让你的 WordPress 起飞！并支持灵活的环境变量配置。
 
 ## 功能特性
 
