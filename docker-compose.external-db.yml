@@ -1,0 +1,32 @@
+# 适用于已有外部数据库的场景
+
+services:
+  wordpress:
+    image: verky/wordpress-mc:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: 127.0.0.1:3306     # 数据库地址（自己修改）
+      WORDPRESS_DB_USER: wordpress          # 数据库用户名
+      WORDPRESS_DB_PASSWORD: wordpress      # 数据库密码
+      WORDPRESS_DB_NAME: wordpress          # 数据库名称
+      # UPLOAD_MAX_FILESIZE: 128M # 单个文件上传的最大大小限制
+      # POST_MAX_SIZE: 128M # 整个POST请求的最大大小限制
+      # MEMORY_LIMIT: 512M # PHP脚本运行时的最大内存限制
+      # PHP_MAX_EXECUTION_TIME: 900 #脚本最大执行时间（秒）
+    volumes:
+      - ./wordpress:/var/www/html
+    depends_on:
+      - memcached
+    networks:
+      - wordpress_network
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64  # 缓存内存大小，可根据需要调整
+    networks:
+      - wordpress_network
+
+networks:
+  wordpress_network:
+    driver: bridge

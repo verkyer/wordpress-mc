@@ -1,0 +1,43 @@
+services:
+  wordpress:
+    image: verky/wordpress-mc:latest
+    ports:
+      - "8080:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress #数据库用户
+      WORDPRESS_DB_PASSWORD: wordpress #数据库密码（自己修改）
+      WORDPRESS_DB_NAME: wordpress #数据库名
+      # UPLOAD_MAX_FILESIZE: 128M # 单个文件上传的最大大小限制
+      # POST_MAX_SIZE: 128M # 整个POST请求的最大大小限制
+      # MEMORY_LIMIT: 512M # PHP脚本运行时的最大内存限制
+      # PHP_MAX_EXECUTION_TIME: 900 #脚本最大执行时间（秒）
+    volumes:
+      - ./wordpress:/var/www/html
+    depends_on:
+      - db
+      - memcached
+    networks:
+      - wordpress_network
+
+  db:
+    image: mysql:5.7.44 #2G内存以下推荐【5.7.44】，以上推荐【8.0】+
+    environment:
+      MYSQL_DATABASE: wordpress #数据库名
+      MYSQL_USER: wordpress #数据库用户
+      MYSQL_PASSWORD: wordpress #数据库密码（自己修改）
+      MYSQL_ROOT_PASSWORD: rootpassword #数据库root密码
+    volumes:
+      - ./db:/var/lib/mysql
+    networks:
+      - wordpress_network
+
+  memcached:
+    image: memcached:alpine
+    command: memcached -m 64
+    networks:
+      - wordpress_network
+
+networks:
+  wordpress_network:
+    driver: bridge

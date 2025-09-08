@@ -1,0 +1,88 @@
+# WordPress 运行时文件
+wordpress/
+db/
+
+# 日志文件
+*.log
+logs/
+
+# 临时文件
+*.tmp
+*.temp
+.DS_Store
+Thumbs.db
+
+# IDE 和编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 系统文件
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Docker 相关
+.docker/
+docker-compose.override.yml
+
+# 环境变量文件（如果包含敏感信息）
+.env
+.env.local
+.env.*.local
+
+# 备份文件
+*.bak
+*.backup
+*.sql
+*.gz
+
+# 缓存文件
+.cache/
+cache/
+
+# Node.js（如果项目中使用）
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 构建输出
+build/
+dist/
+
+# 测试覆盖率
+coverage/
+
+# 其他
+*.pid
+*.seed
+*.pid.lock
+
+# WordPress 特定忽略
+wp-config.php
+wp-content/uploads/
+wp-content/cache/
+wp-content/backup*/
+wp-content/backups/
+wp-content/blogs.dir/
+wp-content/upgrade/
+wp-content/wp-cache-config.php
+wp-content/plugins/hello.php
+
+# 数据库导出
+*.sql
+*.sql.gz
+*.sql.bz2
+
+# 压缩文件
+*.zip
+*.tar.gz
+*.rar
+*.7z
