@@ -1,6 +1,43 @@
 #!/bin/bash
 set -euo pipefail
 
+# === 1. 权限修复逻辑 ===
+# 默认用户和组（官方WordPress镜像的 www-data 用户的UID/GID）
+DEFAULT_UID=33
+DEFAULT_GID=33
+TARGET_USER="www-data" 
+TARGET_DIR="/var/www/html"
+
+# 获取目标 UID/GID，如果未设置 PUID/PGID，则使用默认值 33
+TARGET_UID=${PUID:-$DEFAULT_UID}
+TARGET_GID=${PGID:-$DEFAULT_GID}
+
+echo "Starting with UID: $TARGET_UID, GID: $TARGET_GID"
+
+# 检查是否需要修改 UID/GID
+if [ "$TARGET_UID" -ne "$DEFAULT_UID" ] || [ "$TARGET_GID" -ne "$DEFAULT_GID" ]; then
+    echo "Modifying $TARGET_USER user ID..."
+    
+    # 修改 www-data 用户的 GID
+    groupmod -o -g "$TARGET_GID" "$TARGET_USER" 2>/dev/null || true
+    
+    # 修改 www-data 用户的 UID
+    usermod -o -u "$TARGET_UID" "$TARGET_USER" 2>/dev/null || true
+fi
+
+# 对挂载卷执行权限修复（核心步骤：保证 Apache 能读写）
+echo "Fixing permissions on $TARGET_DIR (for bind mounts)..."
+# 递归更改所有权为新的/目标 UID:GID
+chown -R "$TARGET_UID:$TARGET_GID" "$TARGET_DIR" 
+
+# 设置目录权限为 755
+find "$TARGET_DIR" -type d -exec chmod 755 {} \;
+# 设置文件权限为 644
+find "$TARGET_DIR" -type f -exec chmod 644 {} \;
+
+
+# === 2. PHP 配置逻辑 (保持不变) ===
+
 # 设置默认值
 UPLOAD_MAX_FILESIZE=${UPLOAD_MAX_FILESIZE:-64M}
 POST_MAX_SIZE=${POST_MAX_SIZE:-64M}
@@ -31,5 +68,6 @@ echo "  post_max_size = ${POST_MAX_SIZE}"
 echo "  memory_limit = ${MEMORY_LIMIT}"
 echo "  max_execution_time = ${PHP_MAX_EXECUTION_TIME}"
 
+# === 3. 调用原始入口点 (保持不变) ===
 # 调用原始的WordPress Docker入口点
 exec /usr/local/bin/wordpress-entrypoint.sh "$@"
