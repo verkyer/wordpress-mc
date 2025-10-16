@@ -2,18 +2,20 @@
 FROM wordpress:latest
 
 # 安装系统依赖
+# 添加 shadow 包，确保 usermod/groupmod 可用
 RUN apt-get update && apt-get install -y \
     libmemcached-dev \
     zlib1g-dev \
     libssl-dev \
     unzip \
+    shadow \
     && rm -rf /var/lib/apt/lists/*
 
 # 安装PHP扩展
 RUN docker-php-ext-enable opcache
 RUN pecl install memcached && docker-php-ext-enable memcached
 
-# 复制配置文件
+# 复制配置文件 (假设这些文件在宿主机上存在)
 COPY php.ini /usr/local/etc/php/
 COPY opcache.ini /usr/local/etc/php/conf.d/
 COPY memcached.ini /usr/local/etc/php/conf.d/
