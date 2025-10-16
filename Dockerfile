@@ -2,14 +2,14 @@
 FROM wordpress:latest
 
 # 安装系统依赖
-# 添加 shadow 包，确保 usermod/groupmod 可用
+# 移除 shadow 包，因为 usermod/groupmod 几乎肯定已包含在基础镜像中
 RUN apt-get update && apt-get install -y \
     libmemcached-dev \
     zlib1g-dev \
     libssl-dev \
     unzip \
-    shadow \
     && rm -rf /var/lib/apt/lists/*
+    # 注意：这里已经移除了 shadow
 
 # 安装PHP扩展
 RUN docker-php-ext-enable opcache
